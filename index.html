@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ReMask: A Stage-Aware Reliability Framework for Source-Free Underwater Semantic Segmentation</title>
+  <meta name="description" content="ReMask adapts segmentation models to unlabeled underwater images through stage-aware reliability weighting and an Underwater Reliability Gate.">
+  <meta property="og:title" content="ReMask — Source-Free Underwater Semantic Segmentation">
+  <meta property="og:description" content="Stage-aware reliability for underwater domain adaptation. Explore the method, qualitative results, and open-source implementation.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://kuan2vn.github.io/ReMask.github.io/static/images/qualitative.png">
+  <meta name="theme-color" content="#163d65">
+  <link rel="stylesheet" href="static/style.css">
+  <script src="static/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="hero">
+  <a class="brand" href="https://vinuni.edu.vn/" aria-label="VinUniversity"><img src="static/images/vinuni-greenx-logo.png" width="1210" height="220" alt="VinUniversity — Smart Green Transformation Center"></a>
+  <h1><span>ReMask:</span> A Stage-Aware Reliability Framework for Source-Free Underwater Semantic Segmentation</h1>
+  <p class="affiliation">VinUniversity</p>
+  <div class="publication-links">
+    <a class="button" href="static/pdfs/ReMask.pdf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l4 4v16H6zM14 2v5h4M9 12h6M9 16h6"/></svg>Paper</a>
+    <a class="button" href="https://github.com/Kuan2vn/ReMask" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-14-2 18"/></svg>Code</a>
+  </div>
+</header>
+<main id="main">
+  <section class="teaser container" aria-label="ReMask at a glance">
+    <figure><a href="static/images/qualitative.png" class="figure-link" aria-label="Open qualitative results at full resolution"><img src="static/images/qualitative.png" width="1412" height="740" alt="Three underwater scenes comparing ground truth, Cal-SFDA, IAPC, SND, and ReMask segmentation masks"></a></figure>
+    <p class="tagline"><strong>Reliable pseudo-labels, at the right stage.</strong><br>Adapting to underwater scenes using a source-trained model and unlabeled target images.</p>
+  </section>
+  <section class="section muted" id="abstract">
+    <div class="container narrow"><h2>Abstract</h2>
+      <p>Semantic segmentation of underwater imagery is fundamental to numerous marine applications, including ecological monitoring, underwater robotics, and infrastructure inspection. Source-free unsupervised domain adaptation (SFUDA), which adapts a source-trained segmentation model using only unlabeled target data, offers a practical solution for underwater semantic segmentation. However, existing SFUDA methods often struggle in underwater environments because of severe domain shifts caused by wavelength-dependent light attenuation, scattering, water properties, depth variations, and non-uniform illumination.</p>
+      <p>To address these challenges, we propose <strong>ReMask</strong>, a stage-aware reliability weighting framework that assigns continuous pixel-level reliability weights throughout a two-stage adaptation process. We further introduce the <strong>Underwater Reliability Gate</strong>, which measures prediction stability under an attenuation–backscatter perturbation tailored to underwater image formation. Extensive experiments on two underwater SFUDA settings demonstrate that ReMask consistently improves the transferability of pre-trained segmentation models and achieves state-of-the-art performance.</p>
+    </div>
+  </section>
+  <section class="section" id="method">
+    <div class="container"><h2>Methodology</h2>
+      <p class="intro">ReMask changes its reliability signal as adaptation progresses. An EMA teacher supplies pseudo-labels; the student learns from their continuously weighted supervision.</p>
+      <figure><a class="figure-link" href="static/images/framework.png" aria-label="Open the ReMask framework at full resolution"><img src="static/images/framework.png" width="1640" height="920" loading="lazy" alt="ReMask framework: teacher–student adaptation, uncertainty and agreement, underwater stability, temporal agreement and class balance, and stage-aware composition"></a><figcaption>Overview of ReMask. Reliability modules are used during adaptation and introduce no additional inference-time complexity.</figcaption></figure>
+      <div class="method-steps">
+        <article><span class="step">01 / EARLY ADAPTATION</span><h3>Uncertainty &amp; agreement</h3><p>Teacher entropy and teacher–student disagreement identify reliable pixels before useful prediction history becomes available.</p></article>
+        <article><span class="step">02 / LATER REFINEMENT</span><h3>Temporal &amp; class reliability</h3><p>Historical prediction consistency and clipped class-distribution correction refine supervision after initial target adaptation.</p></article>
+        <article><span class="step">IN BOTH STAGES</span><h3>Underwater Reliability Gate</h3><p>Prediction stability under attenuation–backscatter perturbations is aggregated within connected pseudo-label regions.</p></article>
+      </div>
+    </div>
+  </section>
+  <section class="section muted" id="results">
+    <div class="container"><h2>Experimental Results</h2><p class="intro">Two underwater transfer settings share an eight-class semantic label space. A third setting evaluates generalization to urban scenes.</p>
+      <div class="metrics"><div><strong>49.82<span>%</span></strong><p>UIIS → SUIM</p><small>+5.66 pp over the best compared baseline</small></div><div><strong>50.30<span>%</span></strong><p>USIS10K → SUIM</p><small>+4.40 pp over the best compared baseline</small></div><div><strong>58.7<span>%</span></strong><p>GTA5 → Cityscapes</p><small>+3.1 pp over the reported SND result</small></div></div>
+      <h3 class="table-title">Underwater segmentation performance</h3>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Underwater mIoU comparison table"><table><caption>mIoU (%) on the SUIM target test set. Higher is better.</caption><thead><tr><th scope="col">Method</th><th scope="col">UIIS → SUIM</th><th scope="col">USIS10K → SUIM</th></tr></thead><tbody><tr><th scope="row">Cal-SFDA (MM 2023)</th><td>44.16</td><td>45.90</td></tr><tr><th scope="row">SFMIM (MM 2023)</th><td>40.26</td><td>37.90</td></tr><tr><th scope="row">UOTSL (TIP 2023)</th><td>42.04</td><td>43.57</td></tr><tr><th scope="row">SND (CVPR 2024)</th><td>42.88</td><td>44.48</td></tr><tr><th scope="row">TT-SFUDA (MIDL 2024)</th><td>43.90</td><td>44.67</td></tr><tr><th scope="row">IAPC (TIV 2025)</th><td>41.54</td><td>44.54</td></tr><tr class="ours"><th scope="row">ReMask (Ours)</th><td>49.82</td><td>50.30</td></tr></tbody></table></div>
+      <p class="note">Underwater baseline results are from the paper’s reimplementations under a shared setup. GTA5 → Cityscapes comparisons use results reported in the corresponding papers. Values are single-run results.</p>
+      <div class="efficiency"><div><strong>26.2%</strong><span>less adaptation time per batch than SND</span></div><div><strong>6.68 s</strong><span>per adaptation batch on UIIS → SUIM</span></div><div><strong>18.24 ms</strong><span>inference per image under the paper’s setup</span></div></div>
+    </div>
+  </section>
+  <section class="section" id="qualitative"><div class="container"><h2>Qualitative Results</h2><p class="intro">ReMask reduces class confusion and produces more complete foreground regions on underwater target images.</p><figure><a class="figure-link" href="static/images/qualitative.png" aria-label="Open qualitative comparison at full resolution"><img src="static/images/qualitative.png" width="1412" height="740" loading="lazy" alt="Side-by-side underwater segmentation comparison: input image, ground truth, Cal-SFDA, IAPC, SND, and ReMask"></a><figcaption>SUIM target-domain test examples from the paper. Colors: Diver (blue), Fish (yellow), Robot (red), Sea-floor (white), Reef (magenta), and Background (black).</figcaption></figure></div></section>
+  <section class="section muted" id="resources"><div class="container narrow"><h2>Code &amp; Resources</h2><p>The PyTorch implementation includes source training, two-stage adaptation, label-space harmonization, evaluation, and configurations for all three transfer settings.</p><a class="resource-link" href="https://github.com/Kuan2vn/ReMask" target="_blank" rel="noopener noreferrer">Explore the ReMask repository <span aria-hidden="true">↗</span></a></div></section>
+</main>
+<footer><div class="container narrow"><p>Page layout inspired by <a href="https://nhatminh-hoang.github.io/CoralMonSter.github.io/">CoralMonSter</a> and the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template">Academic Project Page Template</a>.</p><p>VinUniversity branding belongs to its respective owner. ReMask figures and research content belong to the authors.</p></div></footer>
+<button class="back-to-top" aria-label="Back to top" hidden>↑</button>
+</body>
+</html>
