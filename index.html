@@ -11,8 +11,8 @@
   <meta property="og:url" content="https://kuan2vn.github.io/ReMask.github.io/">
   <meta property="og:image" content="https://kuan2vn.github.io/ReMask.github.io/static/images/qualitative.png">
   <meta name="theme-color" content="#143b40">
-  <link rel="stylesheet" href="static/style.css?v=20261022-status">
-  <script src="static/site.js?v=20261022" defer></script>
+  <link rel="stylesheet" href="static/style.css?v=20261022-explorer">
+  <script src="static/site.js?v=20261022-explorer" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#overview">Skip to content</a>
@@ -41,18 +41,40 @@
         <button type="button" class="scene-choice" data-scene="ray" aria-pressed="false">Open water</button>
         <button type="button" class="scene-choice" data-scene="diver" aria-pressed="false">Diver &amp; robot</button>
       </div>
-      <ul class="legend" aria-label="Segmentation colors"><li><i class="fish"></i>Fish</li><li><i class="reef"></i>Reef</li><li><i class="diver"></i>Diver</li><li><i class="robot"></i>Robot</li><li><i class="floor"></i>Sea-floor</li><li><i class="background"></i>Background</li></ul>
+      <div class="class-explorer-heading">EXPLORE PREDICTED CLASSES</div>
+      <div class="class-picker" role="group" aria-label="Highlight predicted classes">
+        <button type="button" class="class-chip" data-class="all" aria-pressed="false">All objects</button>
+        <button type="button" class="class-chip" data-class="6" aria-pressed="false"><i class="fish" aria-hidden="true"></i>Fish</button>
+        <button type="button" class="class-chip" data-class="5" aria-pressed="false"><i class="reef" aria-hidden="true"></i>Reef</button>
+        <button type="button" class="class-chip" data-class="1" aria-pressed="false"><i class="diver" aria-hidden="true"></i>Diver</button>
+        <button type="button" class="class-chip" data-class="4" aria-pressed="false"><i class="robot" aria-hidden="true"></i>Robot</button>
+        <button type="button" class="class-chip" data-class="7" aria-pressed="false"><i class="floor" aria-hidden="true"></i>Sea-floor</button>
+        <button type="button" class="class-chip" data-class="2" aria-pressed="false"><i class="plant" aria-hidden="true"></i>Plant</button>
+        <button type="button" class="class-chip" data-class="3" aria-pressed="false"><i class="wreck" aria-hidden="true"></i>Wreck</button>
+        <button type="button" class="class-chip" data-class="0" aria-pressed="false"><i class="background" aria-hidden="true"></i>Background</button>
+      </div>
+      <p class="class-hint">Select a label to highlight its predictions on the original image.</p>
       <p class="sample-note" id="sample-note" role="status">SUIM test example · Fish and reef</p>
     </div>
     <figure class="interactive-figure">
       <div class="comparison" style="--split:50%">
         <img id="prediction-image" class="comparison-image" src="static/images/scenes/reef-prediction.png" width="340" height="339" alt="ReMask prediction of fish and reef">
         <img id="input-image" class="comparison-image input-layer" src="static/images/scenes/reef-input.webp" width="340" height="339" alt="Original underwater image of fish and reef">
+        <canvas id="class-overlay" class="class-overlay" width="340" height="339" aria-hidden="true"></canvas>
         <span class="image-label input-label">Input image</span><span class="image-label prediction-label">ReMask</span>
         <span class="comparison-divider" aria-hidden="true"><span>‹ ›</span></span>
         <input class="comparison-range" id="comparison-range" type="range" min="0" max="100" value="50" aria-label="Compare original image with ReMask prediction" aria-valuetext="50% input image, 50% ReMask prediction" aria-describedby="comparison-help">
       </div>
-      <figcaption id="comparison-help"><span aria-hidden="true">↔</span> Drag to compare · Use arrow keys when focused.<br>Actual input images and ReMask predictions from the manuscript.</figcaption>
+      <div class="viewer-modes" role="group" aria-label="Image viewer mode">
+        <button type="button" class="viewer-mode" data-mode="compare" aria-pressed="true">Compare</button>
+        <button type="button" class="viewer-mode" data-mode="explore" aria-pressed="false">Explore classes</button>
+      </div>
+      <div class="highlight-controls" id="highlight-controls" hidden>
+        <label for="highlight-opacity">Highlight opacity <output id="opacity-value" for="highlight-opacity">65%</output></label>
+        <input id="highlight-opacity" type="range" min="20" max="100" value="65" step="5">
+      </div>
+      <figcaption id="comparison-help"><span aria-hidden="true">↔</span> Drag to compare, or select a class to inspect its predicted regions.<br>Precomputed ReMask predictions from the manuscript; no live inference.</figcaption>
+      <p class="viewer-status" id="viewer-status" role="status" aria-live="polite">Compare the input image with the ReMask prediction.</p>
     </figure>
   </section>
 
