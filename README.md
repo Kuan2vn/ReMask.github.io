@@ -1,23 +1,35 @@
 # ReMask project page
 
-Static academic project website for **ReMask: A Stage-Aware Reliability Framework for Source-Free Underwater Semantic Segmentation**.
+Website: https://kuan2vn.github.io/ReMask.github.io/
 
-Code: https://github.com/Kuan2vn/ReMask
+Research implementation: https://github.com/Kuan2vn/ReMask
 
-Intended project URL: https://kuan2vn.github.io/ReMask.github.io/
+Static project page for **ReMask: A Stage-Aware Reliability Framework for Source-Free Underwater Semantic Segmentation**. GitHub Pages publishes `main` from the repository root. No build or external JavaScript dependencies are required.
 
-## Preview
+## Local development
 
-Run `python -m http.server 8080` from this folder, then open http://localhost:8080.
+Run `python -m http.server 8080` from this folder and open http://localhost:8080. Edit `index.html`, `static/style.css`, and `static/site.js`.
 
-## GitHub Pages
+## Content and visuals
 
-Create a public repository named `ReMask.github.io` in the `Kuan2vn` account, upload these files to `main`, then choose **Settings → Pages → Deploy from a branch → main → /(root)**.
+- The opening comparison uses three aligned input/prediction pairs cropped from Figure 2 of the supplied manuscript. Predictions remain unmodified; input photos use WebP compression for delivery. These are recorded qualitative examples, not live inference.
+- The responsive SFUDA diagram is an original explanatory illustration implemented in HTML/CSS. It shows which resources are available during adaptation, not an additional experiment.
+- The framework and full qualitative comparison come from the ReMask manuscript. Table values and reported metrics follow that manuscript. Underwater baselines are reimplementations; urban comparisons use reported results. No new performance claims are introduced by this page.
+- The Paper button deliberately points to the absent `static/pdfs/ReMask.pdf` and returns HTTP 404. Do not add the manuscript until its release is authorized.
+- Author names and a publication citation are omitted because the supplied manuscript is anonymous.
+- No datasets, model weights, credentials, experiment logs, or full manuscript are included.
 
-The Paper button intentionally points to `static/pdfs/ReMask.pdf`, which is absent and returns HTTP 404. The manuscript PDF is not included. Author names and a publication citation are omitted because the supplied manuscript is anonymous. Add the verified author list and affiliations when available.
+## Design references and attribution
 
-## Content and attribution
+The page is implemented independently with a restrained academic layout and a visual explanation before technical detail. Project-page references consulted:
 
-Text, tables, and figures were checked against the supplied `ReMask_Draft (26).pdf`; only the selected figures and public-page content are included. Underwater baseline numbers are reimplementations, while the reported urban SND comparison is from prior work. No DT-ST experiments, datasets, checkpoints, credentials, or full manuscript are included.
+- [Nerfies (ICCV 2021)](https://nerfies.github.io/)
+- [MarineInst (ECCV 2024)](https://marineinst.hkustvgd.com/)
+- [CoralSCOP (CVPR 2024)](https://coralscop.hkustvgd.com/)
 
-The page is newly implemented in plain HTML/CSS/JavaScript. Its academic layout is inspired by [CoralMonSter](https://nhatminh-hoang.github.io/CoralMonSter.github.io/) and the [Academic Project Page Template](https://github.com/eliahuhorwitz/Academic-project-page-template). The shared VinUniversity / Smart Green Transformation Center logo is from the reference page and remains the property of its owner. Research text and figures belong to their authors.
+Relevant domain-adaptation communication references:
+
+- [MIC (CVPR 2023)](https://github.com/lhoyer/MIC)
+- [SND (CVPR 2024)](https://github.com/DZhaoXd/SND)
+
+No figures or experimental outputs from these other works are reused. The VinUniversity / Smart Green Transformation Center logo is the same branding asset used on the [CoralMonSter page](https://nhatminh-hoang.github.io/CoralMonSter.github.io/) and remains the property of its owner. Research figures and text belong to the ReMask authors.
