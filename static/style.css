@@ -9,5 +9,6 @@
 @media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}.button,.scene-choice{transition:background .15s,color .15s,border-color .15s}}
 
 /* Keep figure labels and supporting text readable at ordinary display sizes. */
+.submission-status{margin-top:18px;font-size:.82rem;font-weight:500;letter-spacing:.2px;color:#586e68}
 .sample-note,.diagram-input p,.diagram-output p,.setting-caption,.stage-signal,.metrics p,caption,.result-note,.scope,footer.wrap,.interactive-figure figcaption{font-size:.74rem}
 .legend{font-size:.72rem}.model-rule{font-size:.63rem}.showcase-copy>p:not(.eyebrow):not(.sample-note),.paper-summary,.section-heading>p:not(.eyebrow),.reading,.diagram-input p,.diagram-output p,.diagram-model p,.model-rule,.setting-caption,.insight>p:last-child,.stage-schedule article p,.stage-signal,.shared-gate p,.abstract-body,.metrics p,.metric-label,.table-header>span,tbody th,caption,.result-note,.efficiency p,.full-comparison figcaption,.scope,.resources p:last-child,footer.wrap,footer a,.sample-note,.legend,.interactive-figure figcaption{color:#586e68}
