@@ -29,7 +29,7 @@
   <section class="section muted" id="motivation" aria-labelledby="motivation-title">
     <div class="container narrow">
       <h2 id="motivation-title">Why ReMask?</h2>
-      <p><strong>The task.</strong> Underwater robots and monitoring systems need to distinguish fish, divers, reefs, and the sea-floor. Assigning a class to every image pixel is called <strong>semantic segmentation</strong>. But a model trained in one environment can make mistakes in another as water conditions, depth, and lighting change.</p>
+      <p><strong>The task.</strong> Underwater robots and monitoring systems need to distinguish fish, divers, reefs, and the sea-floor. Assigning a class to every image pixel is called <strong>semantic segmentation</strong>. But a model trained in one environment can make mistakes in another as water conditions, depth, and lighting change. Collecting fresh pixel-level annotations is labor-intensive, and the original training dataset may not be available for adaptation.</p>
       <p><strong>The constraint.</strong> We consider adaptation with only a previously trained model and new, unlabeled images: no access to the original training images and no pixel annotations for training in the new environment. This setting is called <strong>source-free unsupervised domain adaptation (SFUDA)</strong>.</p>
       <p><strong>Our idea.</strong> Learning from the model's own predicted labels can reinforce its mistakes. ReMask changes how it judges prediction reliability as adaptation progresses, with an additional check for stability under underwater appearance changes.</p>
     </div>
