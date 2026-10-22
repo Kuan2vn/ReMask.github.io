@@ -33,3 +33,15 @@ Relevant domain-adaptation communication references:
 - [SND (CVPR 2024)](https://github.com/DZhaoXd/SND)
 
 No figures or experimental outputs from these other works are reused. The VinUniversity / Smart Green Transformation Center logo is the same branding asset used on the [CoralMonSter page](https://nhatminh-hoang.github.io/CoralMonSter.github.io/) and remains the property of its owner. Research figures and text belong to the ReMask authors.
+
+## Interactive class explorer (project-page demo)
+
+The [GitHub Pages project page](https://kuan2vn.github.io/ReMask.github.io/) includes a lightweight **Explore classes** mode alongside the original before/after slider:
+
+- Selecting a class chip (Fish, Reef, Diver, Robot, Sea-floor, etc.) switches to a colored overlay of only that predicted class on the original underwater photo. The **All objects** chip highlights non-background predicted classes together.
+- Clicking a point in the image selects the class predicted at that pixel; a small opacity slider adjusts the overlay.
+- Buttons for classes absent in the chosen example are hidden. Each of the three examples uses a **precomputed**, cropped PNG from the manuscript. There is **no live model inference, upload feature, ecological counting, or quantitative measurement**.
+
+Implementation is intentionally static: `index.html` controls, `static/site.js` (Canvas color decoding and overlay), and `static/style.css`. The eight canonical RGB colors are mapped to the harmonized ReMask class IDs in `site.js`. Cropped PNGs can contain anti-aliased edge colors; these are assigned to their nearest palette color, so the interaction is **illustrative**, not an evaluation tool. For any future numerical class-area or error analysis, export full-resolution integer class-ID predictions (and GT, if applicable) from the evaluation pipeline instead of counting pixels in the figure crops.
+
+**Codex polish notes:** Preserve the existing Compare slider and the manuscript images; prioritize spacing, mobile responsiveness, accessible keyboard class selection, and smooth mode-switching. Avoid adding backend inference, unverified accuracy/coverage claims, or unrelated website redesign.
