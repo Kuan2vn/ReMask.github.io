@@ -1,0 +1,37 @@
+{
+  "setting": "UIIS to SUIM",
+  "checkpoint": "temporal_cb_tuned_uwrg_strength020/remask_model_iter003499.pth",
+  "checkpoint_test_miou": 0.49818084888787006,
+  "selection": "Three highest per-image mIoU examples in the 110-image test export not already represented by the original manuscript examples. Rank 2 (d_r_166_) is already represented by the Open water scene. Selected showcase examples, not an unbiased evaluation.",
+  "metric": "Mean IoU over classes with nonzero union in each image, including background; recomputed from native-resolution exported prediction and ground truth.",
+  "source_manifest": "validate_results/paper_posthoc_exports/uiis_remask/mask_inference/mask_inference_samples.csv",
+  "examples": [
+    {
+      "scene": "dolphins",
+      "suim_test_image": "f_r_1435_.jpg",
+      "sample_miou": 0.9612158436812874,
+      "rank_in_110_test_exports": 1,
+      "width": 640,
+      "height": 480,
+      "prediction_sha256": "d8afc4baaa7f49485e882f98b0b6652735d8940edee7f13a7e14cd496560401a"
+    },
+    {
+      "scene": "wreck",
+      "suim_test_image": "w_r_59_.jpg",
+      "sample_miou": 0.6999382399787378,
+      "rank_in_110_test_exports": 3,
+      "width": 640,
+      "height": 480,
+      "prediction_sha256": "9e66fd8856a4ffe3780a687db393f33e12aba210990e4fb3cef455aeaf7e3a01"
+    },
+    {
+      "scene": "scuba",
+      "suim_test_image": "d_r_552_.jpg",
+      "sample_miou": 0.6928848888675863,
+      "rank_in_110_test_exports": 4,
+      "width": 1280,
+      "height": 720,
+      "prediction_sha256": "ab287c8281c32b7bd8b4881de8df111aa7c6fbdc736b682effd0aa20878e3624"
+    }
+  ]
+}

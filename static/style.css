@@ -15,20 +15,23 @@
 
 
 /* Lightweight, precomputed-mask class explorer. Original comparison slider stays unchanged. */
+.scene-picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.scene-choice{min-width:0}
 .class-explorer-heading{margin:20px 0 9px;font-size:.58rem;font-weight:700;letter-spacing:1.15px;color:var(--teal)}
 .class-picker{display:flex;flex-wrap:wrap;gap:7px}
-.class-chip{display:inline-flex;align-items:center;gap:6px;min-height:31px;padding:5px 10px;background:#fff;color:#45635d;border:1px solid #cadbd2;border-radius:5px;font-size:.7rem;line-height:1.3}
+.class-chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:7px 10px;background:#fff;color:#45635d;border:1px solid #cadbd2;border-radius:5px;font-size:.74rem;line-height:1.3}
 .class-chip:hover{border-color:var(--teal);background:#f0f7f3}
 .class-chip[aria-pressed="true"]{color:#fff;background:var(--ink);border-color:var(--ink)}
 .class-chip i{display:inline-block;width:10px;height:10px;border:1px solid #0003;border-radius:2px;flex:none}
 .class-chip .plant{background:#00ff00}.class-chip .wreck{background:#00ffff}
 .class-chip[hidden]{display:none}
+.class-chip:disabled,.viewer-mode:disabled{opacity:.5;cursor:default}
 .class-hint{color:#667f77;font-size:.72rem;line-height:1.55;margin-top:10px}
 .class-overlay{position:absolute;inset:0;width:100%;height:100%;display:none;pointer-events:none}
 .comparison.is-exploring{cursor:crosshair}
 .comparison.is-exploring .input-layer{clip-path:none}
 .comparison.is-exploring #prediction-image,.comparison.is-exploring .comparison-range,.comparison.is-exploring .comparison-divider,.comparison.is-exploring .image-label{display:none}
 .comparison.is-exploring .class-overlay{display:block}
+.comparison[aria-busy="true"]{opacity:.55;pointer-events:none}
 .viewer-modes{display:grid;grid-template-columns:1fr 1fr;padding:3px;margin-top:12px;background:#e8f0ec;border:1px solid #d8e6dd;border-radius:7px}
 .viewer-mode{min-height:35px;border:0;border-radius:5px;background:transparent;color:#526e65;font-size:.73rem;font-weight:600}
 .viewer-mode[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 4px #173a3e1c}
@@ -37,6 +40,8 @@
 .highlight-controls[hidden]{display:none}
 .highlight-controls label{display:flex;justify-content:space-between;gap:16px;color:#58756b;font-size:.73rem;font-weight:550}
 .highlight-controls output{font-variant-numeric:tabular-nums}
-.highlight-controls input{display:block;width:100%;height:20px;margin:5px 0 0;accent-color:var(--teal);cursor:pointer}
+.highlight-controls input{display:block;width:100%;height:30px;margin:5px 0 0;accent-color:var(--teal);cursor:pointer}
 .viewer-status{font-size:.7rem;line-height:1.5;color:#637c72;text-align:center;margin-top:7px}
 @media(max-width:760px){.class-explorer-heading{margin-top:19px}.class-chip{font-size:.72rem;min-height:35px}.class-hint{font-size:.74rem}.viewer-status{font-size:.72rem}}
+@media(pointer:coarse){.class-chip,.viewer-mode,.scene-choice{min-height:44px}.highlight-controls input{height:44px}}
+@media(max-width:760px){.scene-picker{grid-template-columns:repeat(2,minmax(0,1fr))}.setting-diagram{grid-template-columns:minmax(0,1fr)}.diagram-input>div:last-child{width:min(220px,calc(100% - 62px))}.flow-arrow{justify-self:center}}

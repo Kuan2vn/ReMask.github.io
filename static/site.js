@@ -4,7 +4,10 @@
 const scenes = {
   reef: { description: 'fish and reef', note: 'Fish and reef' },
   ray: { description: 'a ray and diver in open water', note: 'Ray and diver in open water' },
-  diver: { description: 'a diver with an underwater robot', note: 'Diver and underwater robot' }
+  diver: { description: 'a diver with an underwater robot', note: 'Diver and underwater robot' },
+  dolphins: { description: 'dolphins near the surface', note: 'Dolphins near the surface' },
+  wreck: { description: 'a diver beside a shipwreck', note: 'Diver and shipwreck' },
+  scuba: { description: 'a scuba diver above the sea-floor', note: 'Scuba diver above the sea-floor' }
 };
 const labels = [
   { name: 'Background', rgb: [0, 0, 0] },
@@ -13,7 +16,7 @@ const labels = [
   { name: 'Wreck', rgb: [0, 255, 255] },
   { name: 'Robot', rgb: [255, 0, 0] },
   { name: 'Reef', rgb: [255, 0, 255] },
-  { name: 'Fish', rgb: [255, 255, 0] },
+  { name: 'Fish / vertebrates', rgb: [255, 255, 0] },
   { name: 'Sea-floor', rgb: [255, 255, 255] }
 ];
 
@@ -33,6 +36,9 @@ let sceneKey = 'reef';
 let mode = 'compare';
 let selectedClass = 'all';
 let requestNumber = 0;
+let currentMask = null;
+let loading = false;
+let loadError = false;
 
 range.addEventListener('input', () => {
   comparison.style.setProperty('--split', range.value + '%');
@@ -55,8 +61,7 @@ function closestClass(red, green, blue) {
   return best;
 }
 
-async function getMask(key) {
-  if (maskCache.has(key)) return maskCache.get(key);
+async function loadMask(key) {
   const image = new Image();
   image.src = 'static/images/scenes/' + key + '-prediction.png';
   await image.decode();
@@ -74,17 +79,27 @@ async function getMask(key) {
     counts[id]++;
   }
   const mask = { width: buffer.width, height: buffer.height, classes, counts };
-  maskCache.set(key, mask);
   return mask;
+}
+
+function getMask(key) {
+  if (!maskCache.has(key)) {
+    maskCache.set(key, loadMask(key).catch(error => {
+      maskCache.delete(key);
+      throw error;
+    }));
+  }
+  return maskCache.get(key);
 }
 
 function updateClassButtons(mask) {
   // Keep the demo compact: show only classes present in the selected example.
   for (const button of classButtons) {
     const key = button.dataset.class;
-    button.hidden = key !== 'all' && mask.counts[Number(key)] === 0;
+    if (mask) button.hidden = key !== 'all' && mask.counts[Number(key)] === 0;
+    button.disabled = !mask || loading;
   }
-  if (selectedClass !== 'all' && mask.counts[Number(selectedClass)] === 0) {
+  if (mask && selectedClass !== 'all' && mask.counts[Number(selectedClass)] === 0) {
     selectedClass = 'all';
   }
   for (const button of classButtons) {
@@ -94,7 +109,7 @@ function updateClassButtons(mask) {
 
 function renderOverlay() {
   if (mode !== 'explore') return;
-  const mask = maskCache.get(sceneKey);
+  const mask = currentMask;
   if (!mask) return;
 
   if (overlay.width !== mask.width) overlay.width = mask.width;
@@ -117,26 +132,30 @@ function renderOverlay() {
 }
 
 function updateStatus() {
-  if (mode === 'compare') {
-    viewerStatus.textContent = 'Compare the input image with the ReMask prediction.';
-  } else if (!maskCache.has(sceneKey)) {
-    viewerStatus.textContent = 'Loading the selected prediction…';
+  if (loading) {
+    viewerStatus.textContent = 'Loading ' + scenes[sceneKey].note.toLowerCase() + '…';
+  } else if (loadError) {
+    viewerStatus.textContent = 'Class highlighting is unavailable. Choose a scene to retry; Compare still works for loaded images.';
+  } else if (mode === 'compare') {
+    viewerStatus.textContent = 'Drag the divider to compare. Arrow keys also work when the image slider is focused.';
   } else {
     const className = selectedClass === 'all' ? 'All predicted objects' : labels[Number(selectedClass)].name;
-    viewerStatus.textContent = className + ' · Click an area of the image to inspect its predicted class.';
+    viewerStatus.textContent = className + ' highlighted. Click or tap the image to select a predicted class.';
   }
 }
 
 function setMode(nextMode) {
   mode = nextMode;
   comparison.classList.toggle('is-exploring', mode === 'explore');
-  range.disabled = mode === 'explore';
+  range.disabled = mode === 'explore' || loading;
   document.querySelector('#highlight-controls').hidden = mode !== 'explore';
   modeButtons.forEach(button => {
     button.setAttribute('aria-pressed', String(button.dataset.mode === mode));
+    button.disabled = button.dataset.mode === 'explore' && loadError;
   });
-  const mask = maskCache.get(sceneKey);
-  if (mask) updateClassButtons(mask);
+  const mask = currentMask;
+  opacitySlider.disabled = loading || !mask;
+  updateClassButtons(mask);
   renderOverlay();
   updateStatus();
 }
@@ -146,33 +165,44 @@ async function setScene(key) {
   if (!scene) return;
   sceneKey = key;
   const thisRequest = ++requestNumber;
+  loading = true;
+  loadError = false;
+  currentMask = null;
+  comparison.setAttribute('aria-busy', 'true');
+  overlayContext.clearRect(0, 0, overlay.width, overlay.height);
+  setMode(mode);
+  const images = [];
   for (const [id, kind, label] of [['input-image', 'input', 'Original underwater image of'], ['prediction-image', 'prediction', 'ReMask prediction of']]) {
     const image = document.getElementById(id);
     image.src = 'static/images/scenes/' + key + '-' + kind + '.' + (kind === 'input' ? 'webp' : 'png');
     image.alt = label + ' ' + scene.description;
+    images.push(image.decode());
   }
   sceneButtons.forEach(button => {
     button.setAttribute('aria-pressed', String(button.dataset.scene === key));
   });
   document.querySelector('#sample-note').textContent = 'SUIM test example · ' + scene.note;
-  overlayContext.clearRect(0, 0, overlay.width, overlay.height);
-  updateStatus();
   try {
-    const mask = await getMask(key);
+    // Wait for both displayed images before enabling a mask on this scene.
+    const [mask] = await Promise.all([getMask(key), ...images]);
     if (thisRequest !== requestNumber) return;
-    updateClassButtons(mask);
-    renderOverlay();
-    updateStatus();
+    currentMask = mask;
+    comparison.style.aspectRatio = mask.width + ' / ' + mask.height;
   } catch (error) {
     if (thisRequest !== requestNumber) return;
     console.error('Failed to load precomputed segmentation mask', error);
-    setMode('compare');
-    viewerStatus.textContent = 'This example could not be loaded. The comparison view is still available.';
+    loadError = true;
+  } finally {
+    if (thisRequest === requestNumber) {
+      loading = false;
+      comparison.setAttribute('aria-busy', 'false');
+      setMode(loadError ? 'compare' : mode);
+    }
   }
 }
 
 function selectClass(key) {
-  const mask = maskCache.get(sceneKey);
+  const mask = currentMask;
   if (!mask || (key !== 'all' && !mask.counts[Number(key)])) return;
   selectedClass = key;
   setMode('explore');
@@ -188,7 +218,7 @@ opacitySlider.addEventListener('input', () => {
 
 comparison.addEventListener('click', event => {
   if (mode !== 'explore') return;
-  const mask = maskCache.get(sceneKey);
+  const mask = currentMask;
   if (!mask) return;
   const rect = comparison.getBoundingClientRect();
   const x = Math.floor((event.clientX - rect.left) * mask.width / rect.width);
