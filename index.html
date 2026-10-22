@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ReMask: A Stage-Aware Reliability Framework for Source-Free Underwater Semantic Segmentation</title>
-  <meta name="description" content="ReMask adapts segmentation models to unlabeled underwater images through stage-aware reliability weighting and an Underwater Reliability Gate.">
+  <meta name="description" content="ReMask helps segmentation models adapt to new underwater conditions using unlabeled images, without revisiting the original training data.">
   <meta property="og:title" content="ReMask — Source-Free Underwater Semantic Segmentation">
-  <meta property="og:description" content="Stage-aware reliability for underwater domain adaptation. Explore the method, qualitative results, and open-source implementation.">
+  <meta property="og:description" content="Adapt underwater segmentation models to new conditions without new training labels or access to the original training images.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://kuan2vn.github.io/ReMask.github.io/static/images/qualitative.png">
   <meta name="theme-color" content="#163d65">
@@ -19,15 +19,24 @@
   <a class="brand" href="https://vinuni.edu.vn/" aria-label="VinUniversity"><img src="static/images/vinuni-greenx-logo.png" width="1210" height="220" alt="VinUniversity — Smart Green Transformation Center"></a>
   <h1><span>ReMask:</span> A Stage-Aware Reliability Framework for Source-Free Underwater Semantic Segmentation</h1>
   <p class="affiliation">VinUniversity</p>
+  <p class="intro">Helping segmentation models adapt to new underwater conditions using unlabeled images, without revisiting the original training data.</p>
   <div class="publication-links">
     <a class="button" href="static/pdfs/ReMask.pdf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l4 4v16H6zM14 2v5h4M9 12h6M9 16h6"/></svg>Paper</a>
     <a class="button" href="https://github.com/Kuan2vn/ReMask" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-14-2 18"/></svg>Code</a>
   </div>
 </header>
 <main id="main">
+  <section class="section muted" id="motivation" aria-labelledby="motivation-title">
+    <div class="container narrow">
+      <h2 id="motivation-title">Why ReMask?</h2>
+      <p><strong>The task.</strong> Underwater robots and monitoring systems need to distinguish fish, divers, reefs, and the sea-floor. Assigning a class to every image pixel is called <strong>semantic segmentation</strong>. But a model trained in one environment can make mistakes in another as water conditions, depth, and lighting change.</p>
+      <p><strong>The constraint.</strong> We consider adaptation with only a previously trained model and new, unlabeled images: no access to the original training images and no pixel annotations for training in the new environment. This setting is called <strong>source-free unsupervised domain adaptation (SFUDA)</strong>.</p>
+      <p><strong>Our idea.</strong> Learning from the model's own predicted labels can reinforce its mistakes. ReMask changes how it judges prediction reliability as adaptation progresses, with an additional check for stability under underwater appearance changes.</p>
+    </div>
+  </section>
   <section class="teaser container" aria-label="ReMask at a glance">
     <figure><a href="static/images/qualitative.png" class="figure-link" aria-label="Open qualitative results at full resolution"><img src="static/images/qualitative.png" width="1412" height="740" alt="Three underwater scenes comparing ground truth, Cal-SFDA, IAPC, SND, and ReMask segmentation masks"></a></figure>
-    <p class="tagline"><strong>Reliable pseudo-labels, at the right stage.</strong><br>Adapting to underwater scenes using a source-trained model and unlabeled target images.</p>
+    <p class="tagline"><strong>Learn from predictions. Reduce the influence of mistakes.</strong><br>ReMask weights its own predicted labels by their reliability throughout adaptation.</p>
   </section>
   <section class="section muted" id="abstract">
     <div class="container narrow"><h2>Abstract</h2>
