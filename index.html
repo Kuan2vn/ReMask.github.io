@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ReMask: A Stage-Aware Reliability Framework for Source-Free Underwater Semantic Segmentation</title>
-  <meta name="description" content="Adapt underwater segmentation models to new conditions using only a trained model and unlabeled images. ReMask learns which predictions to trust as adaptation progresses.">
+  <meta name="description" content="ReMask adapts source-trained underwater segmentation models using unlabeled target images and stage-aware pixel reliability estimates.">
   <meta property="og:title" content="ReMask | Source-Free Underwater Semantic Segmentation">
-  <meta property="og:description" content="New waters. No new training labels. Explore how ReMask adapts underwater segmentation models through stage-aware reliability.">
+  <meta property="og:description" content="Stage-aware reliability weighting for source-free domain adaptation in underwater semantic segmentation.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://kuan2vn.github.io/ReMask.github.io/">
   <meta property="og:image" content="https://kuan2vn.github.io/ReMask.github.io/static/images/qualitative.png">
@@ -34,8 +34,8 @@
   <section class="showcase wrap" aria-labelledby="showcase-title">
     <div class="showcase-copy">
       <p class="eyebrow">FROM IMAGES TO PIXEL LABELS</p>
-      <h2 id="showcase-title">Recognize the scene.<br>Adapt to the water.</h2>
-      <p>Water, depth, and illumination change how underwater scenes look. ReMask helps a previously trained model adapt by learning which of its own predictions to trust.</p>
+      <h2 id="showcase-title">Semantic segmentation<br>under domain shift.</h2>
+      <p>Changes in water properties, depth, and illumination alter underwater image appearance. ReMask adapts a source-trained model by weighting its pseudo-labels according to estimated reliability.</p>
       <div class="scene-picker" role="group" aria-label="Choose a qualitative example">
         <button type="button" class="scene-choice" data-scene="reef" aria-pressed="true">Reef</button>
         <button type="button" class="scene-choice" data-scene="ray" aria-pressed="false">Open water</button>
@@ -83,7 +83,7 @@
 
   <section class="section overview" id="overview" aria-labelledby="overview-title">
     <div class="wrap">
-      <div class="section-heading"><p class="eyebrow">01 / THE PROBLEM</p><h2 id="overview-title">A trained model.<br>A different underwater world.</h2></div>
+      <div class="section-heading"><p class="eyebrow">01 / THE PROBLEM</p><h2 id="overview-title">Source-trained models.<br>New target conditions.</h2></div>
       <div class="reading two-column">
         <p><strong>Semantic segmentation</strong> assigns a class to every pixel, helping underwater robots and monitoring systems distinguish fish, divers, reefs, and the sea-floor. A model trained on one dataset can struggle on another when color, visibility, and lighting change.</p>
         <p>Labeling every new environment is costly, and the original training data may be unavailable. We study <strong>source-free unsupervised domain adaptation (SFUDA)</strong>: adapt using only the trained model and unlabeled images from the new environment.</p>
@@ -101,15 +101,15 @@
         </div>
         <figcaption class="setting-caption"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="8" width="12" height="10" rx="2"/><path d="M6 8V5a4 4 0 0 1 8 0v3"/></svg> Original source images are not accessed during adaptation. Target training labels are not used.</figcaption>
       </figure>
-      <div class="insight"><p class="eyebrow">THE CENTRAL CHALLENGE</p><h3>Learning from predictions also means learning from mistakes.</h3><p>Without target training labels, the model uses its own predicted labels as supervision. Under a domain shift, those predictions can be wrong. Repeatedly trusting them can reinforce the errors — so <strong>which predictions should guide adaptation, and when?</strong></p></div>
+      <div class="insight"><p class="eyebrow">THE CENTRAL CHALLENGE</p><h3>Unreliable pseudo-labels can reinforce prediction errors.</h3><p>Without target training labels, the model uses its own predicted labels as supervision. Under a domain shift, those predictions can be wrong. Repeatedly trusting them can reinforce the errors — so <strong>which predictions should guide adaptation, and when?</strong></p></div>
     </div>
   </section>
 
   <section class="section" id="method" aria-labelledby="method-title"><div class="wrap">
-    <div class="section-heading"><p class="eyebrow">02 / THE IDEA</p><h2 id="method-title">Reliability should evolve<br>with adaptation.</h2><p>Early predictions and later predictions offer different evidence.<br class="desktop-break"> ReMask aligns the reliability signal with the adaptation stage.</p></div>
+    <div class="section-heading"><p class="eyebrow">02 / METHODOLOGY</p><h2 id="method-title">Estimating reliability<br>across adaptation stages.</h2><p>ReMask uses different reliability signals during the initial and subsequent stages of target-domain adaptation.</p></div>
     <div class="stage-schedule">
-      <article><span class="stage-number">STAGE 1</span><h3>Start with uncertainty<br>and agreement.</h3><p>Use prediction uncertainty and agreement between teacher and student while useful prediction history is still limited.</p><span class="stage-signal">Uncertainty–agreement reliability</span></article>
-      <article><span class="stage-number">STAGE 2</span><h3>Refine with history<br>and class balance.</h3><p>Once adapted to the target, use consistency over time and class-distribution correction to refine supervision.</p><span class="stage-signal">Temporal–class reliability</span></article>
+      <article><span class="stage-number">STAGE 1</span><h3>Uncertainty and<br>prediction agreement.</h3><p>Reliability is estimated from prediction uncertainty and teacher–student agreement when target-domain prediction history is limited.</p><span class="stage-signal">Uncertainty–agreement reliability</span></article>
+      <article><span class="stage-number">STAGE 2</span><h3>Temporal consistency<br>and class balance.</h3><p>As adaptation progresses, temporal consistency and class-distribution correction are used to refine pseudo-label supervision.</p><span class="stage-signal">Temporal–class reliability</span></article>
       <div class="shared-gate"><span class="gate-mark" aria-hidden="true">≈</span><div><h3>Underwater Reliability Gate · Both stages</h3><p>Compare predictions before and after an attenuation–backscatter perturbation. Aggregate stability within connected regions to reduce the influence of unstable labels.</p></div></div>
     </div>
     <figure class="framework"><a href="static/images/framework.png" aria-label="Open the full ReMask framework"><img src="static/images/framework.png" width="1632" height="916" loading="lazy" alt="Full ReMask framework with EMA teacher and student, uncertainty–agreement, temporal–class reliability, and underwater region stability"></a><figcaption>The full framework. Reliability modules guide adaptation; the inference architecture stays unchanged.</figcaption></figure>
@@ -118,16 +118,16 @@
   </div></section>
 
   <section class="section results-section" id="results" aria-labelledby="results-title"><div class="wrap">
-    <div class="section-heading"><p class="eyebrow">03 / THE EVIDENCE</p><h2 id="results-title">Two underwater transfers.<br>One shared target benchmark.</h2><p>Instance, salient-instance, and semantic annotations are harmonized<br class="desktop-break"> into eight classes for UIIS → SUIM and USIS10K → SUIM.</p></div>
-    <div class="metrics"><div><span class="metric-label">UIIS → SUIM</span><strong>49.82<span>%</span></strong><span class="metric-gain">+5.66 percentage points</span><p>over the best compared baseline</p></div><div><span class="metric-label">USIS10K → SUIM</span><strong>50.30<span>%</span></strong><span class="metric-gain">+4.40 percentage points</span><p>over the best compared baseline</p></div><div><span class="metric-label">GTA5 → CITYSCAPES</span><strong>58.7<span>%</span></strong><span class="metric-gain">Beyond underwater scenes</span><p>evaluating the stage-aware formulation</p></div></div>
+    <div class="section-heading"><p class="eyebrow">03 / EXPERIMENTAL RESULTS</p><h2 id="results-title">Two underwater transfers.<br>One shared target benchmark.</h2><p>Instance, salient-instance, and semantic annotations are harmonized<br class="desktop-break"> into eight classes for UIIS → SUIM and USIS10K → SUIM.</p></div>
+    <div class="metrics"><div><span class="metric-label">UIIS → SUIM</span><strong>49.82<span>%</span></strong><span class="metric-gain">+5.66 percentage points</span><p>over the best compared baseline</p></div><div><span class="metric-label">USIS10K → SUIM</span><strong>50.30<span>%</span></strong><span class="metric-gain">+4.40 percentage points</span><p>over the best compared baseline</p></div><div><span class="metric-label">GTA5 → CITYSCAPES</span><strong>58.7<span>%</span></strong><span class="metric-gain">Urban-domain evaluation</span><p>evaluating the stage-aware formulation</p></div></div>
     <div class="table-header"><h3>Underwater semantic segmentation</h3><span>mIoU (%) ↑</span></div>
     <div class="table-scroll" tabindex="0" role="region" aria-label="Underwater segmentation comparison"><table><caption>mIoU (%) on the SUIM target test set. Higher is better.</caption><thead><tr><th scope="col">Method</th><th scope="col">UIIS → SUIM</th><th scope="col">USIS10K → SUIM</th></tr></thead><tbody><tr><th scope="row">Cal-SFDA</th><td>44.16</td><td>45.90</td></tr><tr><th scope="row">SFMIM</th><td>40.26</td><td>37.90</td></tr><tr><th scope="row">UOTSL</th><td>42.04</td><td>43.57</td></tr><tr><th scope="row">SND</th><td>42.88</td><td>44.48</td></tr><tr><th scope="row">TT-SFUDA</th><td>43.90</td><td>44.67</td></tr><tr><th scope="row">IAPC</th><td>41.54</td><td>44.54</td></tr><tr class="ours"><th scope="row">ReMask (Ours)</th><td>49.82</td><td>50.30</td></tr></tbody></table></div>
     <p class="result-note"><strong>Reading the results.</strong> mIoU measures overlap between predicted and reference regions; higher is better. Underwater baselines are the paper’s reimplementations under the shared setup. Values are single-run results. GTA5 → Cityscapes comparisons use results reported in the corresponding papers.</p>
-    <div class="efficiency"><strong>No additional inference-time complexity.</strong><p>On UIIS → SUIM, adaptation takes 6.68 s/batch versus SND’s 9.05 s/batch: a 26.2% reduction under the paper’s setup. ReMask inference takes 18.24 ms/image.</p></div>
+    <div class="efficiency"><strong>No additional inference-time parameters.</strong><p>On UIIS → SUIM, adaptation takes 6.68 s/batch versus SND’s 9.05 s/batch: a 26.2% reduction under the paper’s setup. ReMask inference takes 18.24 ms/image.</p></div>
   </div></section>
 
   <section class="section" id="comparisons" aria-labelledby="comparison-title"><div class="wrap">
-    <div class="section-heading"><p class="eyebrow">04 / A CLOSER LOOK</p><h2 id="comparison-title">Better class separation.<br>More complete regions.</h2><p>Compare the actual masks against ground truth and other methods.</p></div>
+    <div class="section-heading"><p class="eyebrow">04 / QUALITATIVE RESULTS</p><h2 id="comparison-title">Qualitative comparisons<br>on the SUIM test set.</h2><p>Compare ReMask predictions with reference annotations and selected baseline methods.</p></div>
     <figure class="full-comparison"><a href="static/images/qualitative.png" aria-label="Open the full qualitative comparison"><img src="static/images/qualitative.png" width="1424" height="756" loading="lazy" alt="Three SUIM test scenes comparing input images, ground truth, Cal-SFDA, IAPC, SND, and ReMask"></a><figcaption>Qualitative results on the SUIM target test set. The opening slider uses crops of these same input images and ReMask predictions. Some region errors remain; the predictions are not ground-truth masks.</figcaption></figure>
     <p class="scope"><strong>Scope.</strong> The underwater study uses two source datasets and one shared target dataset. Testing additional target environments is needed to establish broader generalization. Target annotations support evaluation; target training labels stay out of adaptation gradients.</p>
   </div></section>
